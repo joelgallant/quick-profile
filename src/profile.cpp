@@ -43,17 +43,17 @@ void Profiler::stop(std::string s) {
 
 void Profiler::report(std::string s) {
     cout <<
-        setw(30) << s <<
-        setw(15) << "calls: " << calls[s] <<
-        setw(15) << "callsPer: " << calls[s] / calls["MAIN"] <<
-        setw(15) << "totalTime: " << totalTime[s] << "ms" <<
-        "\ttime%: " << 100 * (float(totalTime[s]) / totalTime["MAIN"]) <<
-        "\taverageTime: " << averageTime[s] << "ms" << endl;
+        s << '\t' <<
+        "calls: " << calls[s] << '\t' <<
+        "callsPer: " << calls[s] / calls["MAIN"] << '\t' <<
+        "totalTime: " << totalTime[s] << "ms" << '\t' <<
+        "time%: " << 100 * (float(totalTime[s]) / totalTime["MAIN"]) << '\t' <<
+        "averageTime: " << averageTime[s] << "ms" << endl;
 }
 
 void Profiler::report() {
-    cout << "--- ---" << endl;
     for (auto i = started.begin(); i != started.end(); i++) {
         report(i->first);
     }
+    cout << endl;
 }
