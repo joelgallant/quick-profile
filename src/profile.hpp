@@ -25,3 +25,5 @@ private:
 #define STOP_PROFILE(x) (Profiler::get().stop((x)))
 #define START_MAIN_PROFILE() (Profiler::get().startMain())
 #define STOP_MAIN_PROFILE() (Profiler::get().stopMain())
+#define REPORT_PROFILE(x) (Profiler::get().report((x)))
+#define REPORT_ALL_PROFILE() (Profiler::get().report())
