@@ -20,3 +20,15 @@ public:
 private:
     Profiler();
 };
+
+#ifdef PROFILE
+    #define START_PROFILE(x) (Profiler::get().start((x)))
+    #define STOP_PROFILE(x) (Profiler::get().stop((x)))
+    #define START_MAIN_PROFILE() (Profiler::get().startMain())
+    #define STOP_MAIN_PROFILE() (Profiler::get().stopMain())
+#else
+    #define START_PROFILE(x)
+    #define STOP_PROFILE(x)
+    #define START_MAIN_PROFILE()
+    #define STOP_MAIN_PROFILE()
+#endif
