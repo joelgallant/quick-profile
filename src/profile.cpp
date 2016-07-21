@@ -30,7 +30,7 @@ void Profiler::startMain() {
 void Profiler::stopMain() {
     calls["MAIN"] += 1;
     total["MAIN"] += tick_micro() - started["MAIN"];
-    average["MAIN"] = 1;
+    average["MAIN"] = total["MAIN"] / calls["MAIN"];
 }
 
 void Profiler::start(std::string s) {
