@@ -2,6 +2,8 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -23,6 +25,24 @@ Profiler& Profiler::get() {
 
 Profiler::Profiler() { }
 
+std::string Profiler::getUniqueID(std::string s) {
+    vector<pair<string, uint32_t>> parents;
+    for (auto const &i : started) {
+        auto id = i.first;
+        if (i.second > 0 && id.find(s) == string::npos && id != "MAIN") {
+            parents.push_back(i);
+        }
+    }
+    sort(parents.begin(), parents.end(),
+            [](pair<string, uint32_t> p, pair<string, uint32_t> p2)
+                { return p.second > p2.second; });
+    if (parents.size() > 0) {
+        return parents[0].first + ":" + s;
+    } else {
+        return s;
+    }
+}
+
 void Profiler::startMain() {
     started["MAIN"] = tick_micro();
 }
@@ -34,44 +54,20 @@ void Profiler::stopMain() {
 }
 
 void Profiler::start(std::string s) {
-    auto tick = tick_micro();
-    string parent;
-    for (auto const &i : started) {
-        if (i.second > 0 && i.first != s && i.first != "MAIN") {
-            s = i.first + ":" + s;
-            parent = i.first;
-            break;
-        }
-    }
-
-    started[s] = tick;
-
-    // reduce parent of overhead from this method
-    total[parent] -= tick_micro() - tick;
+    auto id = getUniqueID(s);
+    started[id] = tick_micro();
 }
 
 void Profiler::stop(std::string s) {
-    auto tick = tick_micro();
-    string parent;
-    for (auto const &i : started) {
-        if (i.second > 0 && i.first != s && i.first != "MAIN") {
-            s = i.first + ":" + s;
-            parent = i.first;
-            break;
-        }
-    }
-
-    calls[s] += 1;
-    total[s] += tick_micro() - started[s];
-    average[s] = total[s] / calls[s];
-    started[s] = 0;
-
-    // reduce parent of overhead from this method
-    total[parent] -= tick_micro() - tick;
+    auto id = getUniqueID(s);
+    calls[id] += 1;
+    total[id] += tick_micro() - started[id];
+    average[id] = total[id] / calls[id];
+    started[id] = 0;
 }
 
 void Profiler::report(std::string s) {
-    cout.width(30);
+    cout.width(50);
     cout << left << s;
 
     cout << "calls: ";

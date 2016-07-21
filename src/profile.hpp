@@ -19,6 +19,8 @@ public:
     void report();
 private:
     Profiler();
+
+    std::string getUniqueID(std::string s);
 };
 
 #define START_PROFILE(x) (Profiler::get().start((x)))
