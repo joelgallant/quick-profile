@@ -4,10 +4,10 @@
 #include <string>
 
 class Profiler {
-    std::map<std::string, int> started;
-    std::map<std::string, int> calls;
-    std::map<std::string, int> totalTime;
-    std::map<std::string, int> averageTime;
+    std::map<std::string, uint32_t> started;
+    std::map<std::string, uint32_t> calls;
+    std::map<std::string, uint32_t> total;
+    std::map<std::string, uint32_t> average;
 public:
     static Profiler& get();
 

@@ -1,18 +1,18 @@
 #include "profile.hpp"
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 
 using namespace std;
 
-static uint32_t getTick() {
+static uint32_t tick_micro() {
     struct timespec timespec_time;
-    uint32_t theTick = 0;
 
     clock_gettime(CLOCK_MONOTONIC, &timespec_time);
 
-    theTick = timespec_time.tv_nsec / 1000000;
-    theTick += timespec_time.tv_sec * 1000;
-    return theTick;
+    uint32_t tick = timespec_time.tv_nsec / 1000;
+    tick += timespec_time.tv_sec * 1000000;
+    return tick;
 }
 
 Profiler& Profiler::get() {
@@ -24,36 +24,73 @@ Profiler& Profiler::get() {
 Profiler::Profiler() { }
 
 void Profiler::startMain() {
-    start("MAIN");
+    started["MAIN"] = tick_micro();
 }
 
 void Profiler::stopMain() {
-    stop("MAIN");
+    calls["MAIN"] += 1;
+    total["MAIN"] += tick_micro() - started["MAIN"];
+    average["MAIN"] = 1;
 }
 
 void Profiler::start(std::string s) {
-    started[s] = getTick();
+    auto tick = tick_micro();
+    for (auto const &i : started) {
+        if (i.second > 0 && i.first != s && i.first != "MAIN") {
+            s = i.first + ":" + s;
+            break;
+        }
+    }
+
+    started[s] = tick;
 }
 
 void Profiler::stop(std::string s) {
+    auto tick = tick_micro();
+    for (auto const &i : started) {
+        if (i.second > 0 && i.first != s && i.first != "MAIN") {
+            s = i.first + ":" + s;
+            break;
+        }
+    }
+
     calls[s] += 1;
-    totalTime[s] += getTick() - started[s];
-    averageTime[s] = totalTime[s] / calls[s];
+    total[s] += tick_micro() - started[s];
+    average[s] = total[s] / calls[s];
+    started[s] = 0;
 }
 
 void Profiler::report(std::string s) {
-    cout <<
-        s << '\t' <<
-        "calls: " << calls[s] << '\t' <<
-        "callsPer: " << calls[s] / calls["MAIN"] << '\t' <<
-        "totalTime: " << totalTime[s] << "ms" << '\t' <<
-        "time%: " << 100 * (float(totalTime[s]) / totalTime["MAIN"]) << '\t' <<
-        "averageTime: " << averageTime[s] << "ms" << endl;
+    cout.width(30);
+    cout << left << s;
+
+    cout << "calls: ";
+    cout.width(6);
+    cout << left << calls[s];
+
+    cout << "calls in MAIN: ";
+    cout.width(4);
+    cout << left << static_cast<float>(calls[s] / calls["MAIN"]);
+
+    cout << "total: ";
+    cout.width(7);
+    cout << right << to_string(total[s] / 1000) + "ms" << "  / ";
+    stringstream time;
+    time << fixed << setprecision(2) <<
+        float(total[s]) / total["MAIN"] * 100 << "%";
+    cout.width(7);
+    cout << right << time.str() << "   ";
+
+    cout << "average: ";
+    cout.width(8);
+    cout << right << to_string(average[s]) + "µs";
+
+    cout << endl;
 }
 
 void Profiler::report() {
-    for (auto i = started.begin(); i != started.end(); i++) {
-        report(i->first);
+    for (auto const &i : started) {
+        report(i.first);
     }
     cout << endl;
 }
