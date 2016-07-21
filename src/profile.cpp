@@ -35,21 +35,28 @@ void Profiler::stopMain() {
 
 void Profiler::start(std::string s) {
     auto tick = tick_micro();
+    string parent;
     for (auto const &i : started) {
         if (i.second > 0 && i.first != s && i.first != "MAIN") {
             s = i.first + ":" + s;
+            parent = i.first;
             break;
         }
     }
 
     started[s] = tick;
+
+    // reduce parent of overhead from this method
+    total[parent] -= tick_micro() - tick;
 }
 
 void Profiler::stop(std::string s) {
     auto tick = tick_micro();
+    string parent;
     for (auto const &i : started) {
         if (i.second > 0 && i.first != s && i.first != "MAIN") {
             s = i.first + ":" + s;
+            parent = i.first;
             break;
         }
     }
@@ -58,6 +65,9 @@ void Profiler::stop(std::string s) {
     total[s] += tick_micro() - started[s];
     average[s] = total[s] / calls[s];
     started[s] = 0;
+
+    // reduce parent of overhead from this method
+    total[parent] -= tick_micro() - tick;
 }
 
 void Profiler::report(std::string s) {
