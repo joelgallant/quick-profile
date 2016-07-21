@@ -26,6 +26,8 @@ Profiler& Profiler::get() {
 Profiler::Profiler() { }
 
 std::string Profiler::getUniqueID(std::string s) {
+    auto tick = tick_micro();
+
     vector<pair<string, uint32_t>> parents;
     for (auto const &i : started) {
         auto id = i.first;
@@ -36,6 +38,12 @@ std::string Profiler::getUniqueID(std::string s) {
     sort(parents.begin(), parents.end(),
             [](pair<string, uint32_t> p, pair<string, uint32_t> p2)
                 { return p.second > p2.second; });
+
+    auto overhead = tick_micro() - tick;
+    for (auto const &p : parents) {
+        total[p.first] -= overhead;
+    }
+
     if (parents.size() > 0) {
         return parents[0].first + ":" + s;
     } else {
