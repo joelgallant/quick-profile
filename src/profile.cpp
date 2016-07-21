@@ -103,7 +103,15 @@ void Profiler::report(std::string s) {
 }
 
 void Profiler::report() {
-    for (auto const &i : started) {
+    vector<pair<string, uint32_t>> times;
+    for (auto const &i : total) {
+        times.push_back(i);
+    }
+    sort(times.begin(), times.end(),
+            [](pair<string, uint32_t> p, pair<string, uint32_t> p2)
+                { return p.second > p2.second; });
+
+    for (auto const &i : times) {
         report(i.first);
     }
     cout << endl;
