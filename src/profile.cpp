@@ -75,7 +75,14 @@ void Profiler::stop(std::string s) {
 }
 
 void Profiler::report(std::string s) {
-    cout.width(50);
+    int max = 30;
+    for (auto const &i : total) {
+        if (i.first.length() > max) {
+            max = i.first.length() + 2;
+        }
+    }
+
+    cout.width(max);
     cout << left << s;
 
     cout << "calls: ";
