@@ -19,6 +19,9 @@ if len(sys.argv) < 2 or not isinstance(sys.argv[1], str):
 
 nodes = []
 for line in open(sys.argv[1], 'r'):
+    if len(line) <= 1:
+        continue
+
     names = line[: line.find('calls:')].strip()
     line = line[line.find('calls:') + 6:]
 
