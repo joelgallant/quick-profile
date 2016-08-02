@@ -10,4 +10,6 @@ if (HAS_PARENT)
     set(QUICK_PROFILE_INCLUDE "${QUICK_PROFILE_INCLUDE}" PARENT_SCOPE)
 endif()
 
-add_library(profile src/profile)
+if (NOT TARGET profile)
+    add_library(profile src/profile)
+endif()
