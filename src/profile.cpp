@@ -62,16 +62,22 @@ void Profiler::stopMain() {
 }
 
 void Profiler::start(std::string s) {
-    auto id = getUniqueID(s);
-    started[id] = tick_micro();
+    startUnique(getUniqueID(s));
+}
+
+void Profiler::startUnique(std::string s) {
+    started[s] = tick_micro();
 }
 
 void Profiler::stop(std::string s) {
-    auto id = getUniqueID(s);
-    calls[id] += 1;
-    total[id] += tick_micro() - started[id];
-    average[id] = total[id] / calls[id];
-    started[id] = 0;
+    stopUnique(getUniqueID(s));
+}
+
+void Profiler::stopUnique(std::string s) {
+    calls[s] += 1;
+    total[s] += tick_micro() - started[s];
+    average[s] = total[s] / calls[s];
+    started[s] = 0;
 }
 
 void Profiler::report(std::string s) {
