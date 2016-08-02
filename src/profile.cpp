@@ -2,7 +2,9 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <thread>
 #include <vector>
+#include <map>
 #include <algorithm>
 
 using namespace std;
@@ -18,14 +20,19 @@ static uint32_t tick_micro() {
 }
 
 Profiler& Profiler::get() {
-    static Profiler instance;
+    static map<thread::id, Profiler> instances;
 
-    return instance;
+    auto id = this_thread::get_id();
+    if (instances.find(id) == instances.end()) {
+        instances.emplace(id, Profiler());
+    }
+
+    return instances.at(id);
 }
 
 Profiler::Profiler() { }
 
-std::string Profiler::getUniqueID(std::string s) {
+string Profiler::getUniqueID(string s) {
     auto tick = tick_micro();
 
     vector<pair<string, uint32_t>> parents;
@@ -61,26 +68,26 @@ void Profiler::stopMain() {
     average["MAIN"] = total["MAIN"] / calls["MAIN"];
 }
 
-void Profiler::start(std::string s) {
+void Profiler::start(string s) {
     startUnique(getUniqueID(s));
 }
 
-void Profiler::startUnique(std::string s) {
+void Profiler::startUnique(string s) {
     started[s] = tick_micro();
 }
 
-void Profiler::stop(std::string s) {
+void Profiler::stop(string s) {
     stopUnique(getUniqueID(s));
 }
 
-void Profiler::stopUnique(std::string s) {
+void Profiler::stopUnique(string s) {
     calls[s] += 1;
     total[s] += tick_micro() - started[s];
     average[s] = total[s] / calls[s];
     started[s] = 0;
 }
 
-void Profiler::report(std::string s) {
+void Profiler::report(string s) {
     int max = 30;
     for (auto const &i : total) {
         if (i.first.length() > max) {
