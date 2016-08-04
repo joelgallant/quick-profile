@@ -41,6 +41,7 @@ class Profiler {
     std::map<std::string, uint32_t> calls;
     std::map<std::string, uint32_t> total;
     std::map<std::string, uint32_t> average;
+    int main_loops = 0;
 public:
     inline static Profiler& get() {
         static std::map<std::thread::id, Profiler> instances;
@@ -54,13 +55,21 @@ public:
     }
 
     inline void startMain() {
-        started["MAIN"] = tick_micro();
+        // first loop to start
+        if (main_loops == 0) {
+            started["MAIN"] = tick_micro();
+        }
+        main_loops++;
     }
 
     inline void stopMain() {
-        calls["MAIN"] += 1;
-        total["MAIN"] += tick_micro() - started["MAIN"];
-        average["MAIN"] = total["MAIN"] / calls["MAIN"];
+        // first loop to start
+        if (main_loops == 1) {
+            calls["MAIN"] += 1;
+            total["MAIN"] += tick_micro() - started["MAIN"];
+            average["MAIN"] = total["MAIN"] / calls["MAIN"];
+        }
+        main_loops--;
     }
 
     inline void start(std::string s) {
