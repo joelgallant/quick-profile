@@ -9,7 +9,3 @@ set(QUICK_PROFILE_INCLUDE "${PROJECT_SOURCE_DIR}")
 if (HAS_PARENT)
     set(QUICK_PROFILE_INCLUDE "${QUICK_PROFILE_INCLUDE}" PARENT_SCOPE)
 endif()
-
-if (NOT TARGET profile)
-    add_library(profile src/profile)
-endif()
