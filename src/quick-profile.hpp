@@ -92,6 +92,10 @@ public:
     }
 
     inline void report(std::string s) {
+        if (calls["MAIN"] == 0) {
+            return;
+        }
+
         int max = 30;
         for (auto const &i : total) {
             if (i.first.length() > max) {
