@@ -112,7 +112,7 @@ public:
 
         std::cout << "calls in MAIN: ";
         std::cout.width(4);
-        std::cout << std::left << static_cast<float>(calls[s] / calls["MAIN"]);
+        std::cout << std::left << std::ceil(static_cast<float>(calls[s]) / calls["MAIN"]);
 
         std::cout << "total: ";
         std::cout.width(7);
@@ -131,6 +131,10 @@ public:
     }
 
     inline void report() {
+        if (calls["MAIN"] == 0) {
+            return;
+        }
+
         std::vector<std::pair<std::string, uint32_t>> times;
         for (auto const &i : total) {
             times.push_back(i);
