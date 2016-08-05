@@ -9,6 +9,10 @@ well too!
 Is best designed for a looping program (like most are), where there is a "main"
 loop and subfunctions that run inside it.
 
+Oh, and it's zero overhead when disabled. So you can leave those calls in your
+code, and not worry about hundreds of boolean checks. Just define or undefine
+`QUICK_PROFILE`.
+
 ### Example
 ```c++
 #include <quick-profile.hpp>
