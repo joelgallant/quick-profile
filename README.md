@@ -10,7 +10,7 @@ Is best designed for a looping program (like most are), where there is a "main"
 loop and subfunctions that run inside it.
 
 ### Example
-```
+```c++
 #include <quick-profile.hpp>
 
 void foo() {
