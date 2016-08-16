@@ -107,12 +107,12 @@ public:
         std::cout << std::left << s;
 
         std::cout << "calls: ";
-        std::cout.width(6);
-        std::cout << std::left << calls[s];
+        std::cout.width(3);
+        std::cout << std::right << calls[s] << "  ";
 
         std::cout << "calls in MAIN: ";
-        std::cout.width(4);
-        std::cout << std::left << std::ceil(static_cast<float>(calls[s]) / calls["MAIN"]);
+        std::cout.width(3);
+        std::cout << std::right << std::ceil(static_cast<float>(calls[s]) / calls["MAIN"]) << "  ";
 
         std::cout << "total: ";
         std::cout.width(7);
@@ -124,7 +124,7 @@ public:
         std::cout << std::right << time.str() << "   ";
 
         std::cout << "average: ";
-        std::cout.width(8);
+        std::cout.width(12);
         std::cout << std::right << std::to_string(average[s]) + "µs";
 
         std::cout << std::endl;
