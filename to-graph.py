@@ -64,7 +64,7 @@ for node in nodes:
 def pretty(nodes, name = "", level=0):
     if name != "":
         points = int(nodes['percentage'] / 3)
-        print(('|' * points) + (" " * ((100 / 3) - points)) + ('\t' * level) + name + ": " + str(nodes['percentage']) + "%")
+        print(('\t' * level) + name + ": " + ("%.2f" % nodes['percentage']) + "%")
     children = [node for node in nodes.iteritems() if isinstance(node[1], dict)]
     for node in sorted(children, key=lambda node: node[1]['percentage'], reverse = True):
         pretty(node[1], node[0], level + 1)
